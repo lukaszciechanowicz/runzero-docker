@@ -33,16 +33,18 @@ The dataset holds the private download URL, generated Explorer identity, executa
 3. Open the TrueNAS system shell. Replace the example dataset path below with yours, then run:
 
    ```sh
-   sudo sh -c 'umask 077; cat > /mnt/tank/apps/runzero/download-url'
+   sudo sh -c 'umask 077; printf "Paste Explorer URL: " >&2; IFS= read -r url && printf "%s\n" "$url" > /mnt/tank/apps/runzero/download-url'
    ```
 
-4. Paste the URL as one line, press Enter, then Ctrl-D. This avoids putting the URL in shell command history. If already root, omit `sudo`.
+4. At the prompt, paste the URL as one line and press Enter. The command saves the file and exits; Ctrl-D is not needed. This avoids putting the URL in shell command history. If already root, omit `sudo`.
 5. Ensure the file is root-owned and readable only by root:
 
    ```sh
    sudo chown root:root /mnt/tank/apps/runzero/download-url
    sudo chmod 600 /mnt/tank/apps/runzero/download-url
    ```
+
+`umask` is a shell built-in, not an executable: `sudo umask ...` does not work. The command above runs it inside `sh`. If you used an older instruction containing `cat > ...` and it appears stuck, it is waiting for pasted input and Ctrl-D; press Ctrl-C to cancel, then use the prompted command above.
 
 Treat this URL as a credential. Do not commit it, post it in issues, or include it in screenshots. The repository ignores a local file named `download-url`, but keep the dataset outside the checkout regardless.
 
