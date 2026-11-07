@@ -1,0 +1,7 @@
+.env
+.env.*
+compose.override.yaml
+compose.override.yml
+download-url
+host-id
+.DS_Store

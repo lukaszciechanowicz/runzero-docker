@@ -1,0 +1,46 @@
+services:
+  explorer:
+    image: debian:13-slim
+    user: "0:0"
+    privileged: true
+    network_mode: host
+    restart: unless-stopped
+    stop_grace_period: 60s
+    environment:
+      RUNZERO_AGENT_LOG_STDOUT: "true"
+      RUNZERO_AGENT_LOG_FILE: "false"
+      DEBIAN_FRONTEND: noninteractive
+    volumes:
+      - type: bind
+        source: /mnt/REPLACE_POOL/apps/runzero
+        target: /opt/runzero
+        bind:
+          create_host_path: false
+    working_dir: /opt/runzero
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        umask 077
+        mkdir -p /opt/runzero/bin
+        if [ ! -x /opt/runzero/bin/runzero-agent.bin ] && [ ! -s /opt/runzero/download-url ]; then
+          echo 'Save your organization-specific Explorer URL in the dataset file download-url before starting.' >&2
+          exit 1
+        fi
+        if ! command -v curl >/dev/null 2>&1; then
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates curl
+          rm -rf /var/lib/apt/lists/*
+        fi
+        if [ ! -s /opt/runzero/host-id ]; then
+          tr -d '\n-' < /proc/sys/kernel/random/uuid > /opt/runzero/host-id
+        fi
+        export RUNZERO_AGENT_HOST_ID="$$(cat /opt/runzero/host-id)"
+        if [ ! -x /opt/runzero/bin/runzero-agent.bin ]; then
+          curl --fail --silent --show-error --location \
+            --output /opt/runzero/bin/runzero-agent.download \
+            "$$(cat /opt/runzero/download-url)"
+          chmod 700 /opt/runzero/bin/runzero-agent.download
+          mv /opt/runzero/bin/runzero-agent.download /opt/runzero/bin/runzero-agent.bin
+        fi
+        cd /opt/runzero/bin
+        exec ./runzero-agent.bin manual
