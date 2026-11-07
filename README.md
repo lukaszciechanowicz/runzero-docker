@@ -1,3 +1,5 @@
+<img src="images/runzero-logo.png" alt="runZero" width="300" height="75"> <img src="images/truenas-logo.png" alt="TrueNAS" width="300" height="75">
+
 # runZero Explorer on TrueNAS
 
 ![Software inventory](images/software-inventory.png)
