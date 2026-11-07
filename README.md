@@ -1,5 +1,9 @@
 # runZero Explorer on TrueNAS
 
+![Software inventory](images/software-inventory.png)
+
+![Vulnerability inventory](images/vulnerability-inventory.png)
+
 Deploy a runZero Explorer as a custom Docker Compose application on Linux-based TrueNAS 24.10 or newer. Manage discovery jobs and inventory through your existing runZero cloud console.
 
 This is a community deployment configuration, not an official runZero container image. It uses the official Debian 13 slim image and downloads the Explorer directly from your organization-specific runZero URL. It does not install the runZero Console.
